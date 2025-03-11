@@ -10,10 +10,10 @@ df = pd.read_csv("https://raw.githubusercontent.com/murpi/wilddata/master/quests
 st.title('Analyse des données des voitures')
 
 # Ajouter des boutons de filtre pour la région
-region = st.selectbox("Sélectionner la région", ["US", "Europe", "Japon", "Tout"])
+region = st.selectbox("Sélectionner la région", ["Tout","US", "Europe", "Japon"])
 
 if region != "Tout":
-    df = df[df['continent'] == region]
+    df = df[df['continent'].str.contains(region)]
 
 # Afficher quelques statistiques de base
 st.subheader("Statistiques des données")
@@ -21,7 +21,7 @@ st.write(df.describe())
 
 # Afficher la corrélation entre les variables
 st.subheader("Analyse de Corrélation")
-corr = df.corr()
+corr = df.select_dtypes(include=['float64', 'int64']).corr()
 fig, ax = plt.subplots(figsize=(10, 8))
 sns.heatmap(corr, annot=True, cmap='coolwarm', ax=ax)
 st.pyplot(fig)
@@ -40,7 +40,3 @@ if region == "Tout":
     fig, ax = plt.subplots(figsize=(10, 6))
     sns.countplot(x='continent', data=df, ax=ax)
     st.pyplot(fig)
-
-# Exécution de l'application
-if __name__ == '__main__':
-    st.write("Application terminée.")
